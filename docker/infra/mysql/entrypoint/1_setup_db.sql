@@ -1,0 +1,8 @@
+CREATE DATABASE
+    laravel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'app_user'@'%' IDENTIFIED BY '';
+
+GRANT ALL PRIVILEGES ON laravel.* TO 'app_user'@'%';
+
+FLUSH PRIVILEGES;
