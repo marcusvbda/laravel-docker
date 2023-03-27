@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysql:
-    container_name: forest_mysql
+    container_name: laravel_mysql
     image: 'mysql:8.0.29'
     tty: true
     restart: unless-stopped
@@ -14,12 +14,11 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_ROOT_PASSWORD: ""
     volumes:
-      - ./docker/infra/mysql/entrypoint:/docker-entrypoint-initdb.d
+      - ./mysql/entrypoint:/docker-entrypoint-initdb.d
 
   app:
-    container_name: forest_app
+    container_name: laravel_app
     build:
-      context: ./docker/infra/php81
       dockerfile: Dockerfile
     networks:
       - web
@@ -30,7 +29,7 @@ services:
       XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
     volumes:
       - './:/var/www/html'
-      - './docker/app/.env:/var/www/html/.env'
+      - './.env:/var/www/html/.env'
     depends_on:
       - mysql
 
