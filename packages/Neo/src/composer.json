@@ -1,0 +1,13 @@
+{
+  "name" : "mvbassalobre/neo",
+  "autoload" : {
+    "psr-4" : {
+      "Neo\\" : "src/"
+    }
+  },
+  "authors": [{
+    "name": "Marcus Vinicius Bassalobre de Assis",
+    "email": "bassalobre.vinicius@gmail.com"
+  }],
+  "require" : {}
+}
