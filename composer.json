@@ -28,7 +28,7 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Calisto\\" : "packages/calisto/src/"
+            "Lazarus\\" : "packages/lazarus/src/"
         }
     },
     "autoload-dev": {

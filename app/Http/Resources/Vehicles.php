@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Calisto\Resource;
 use App\Models\Vehicle;
+use Lazarus\Resource;
 
 class Vehicles extends Resource
 {

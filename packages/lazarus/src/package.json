@@ -1,0 +1,27 @@
+{
+  "name" : "mvbassalobre/lazarus",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "autoload" : {
+    "psr-4" : {
+      "Lazarus\\" : "src/"
+    },
+    "classmap": ["Lazarus"]
+  },
+  "authors": [{
+    "name": "Marcus Vinicius Bassalobre de Assis",
+    "email": "bassalobre.vinicius@gmail.com"
+  }],
+  "require": {
+    "php": "^8.1",
+    "inertiajs/inertia-laravel": "^0.6.8",
+    "laravel/breeze": "^1.20"
+  },
+  "extra": {
+    "laravel": {
+        "providers": [
+          "Lazarus\\LazarusServiceProvider"
+        ]
+    }
+  } 
+}

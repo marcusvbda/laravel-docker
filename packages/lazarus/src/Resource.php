@@ -1,6 +1,6 @@
 <?php
 
-namespace Calisto;
+namespace Lazarus;
 
 use Inertia\Inertia;
 use Inertia\Response;
