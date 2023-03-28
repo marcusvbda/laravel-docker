@@ -28,7 +28,7 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Neo\\" : "packages/neo/src/"
+            "Calisto\\" : "packages/calisto/src/"
         }
     },
     "autoload-dev": {

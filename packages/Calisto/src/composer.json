@@ -1,8 +1,8 @@
 {
-  "name" : "mvbassalobre/neo",
+  "name" : "mvbassalobre/calisto",
   "autoload" : {
     "psr-4" : {
-      "Neo\\" : "src/"
+      "Calisto\\" : "src/"
     }
   },
   "authors": [{

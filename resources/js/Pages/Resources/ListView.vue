@@ -2,14 +2,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
-defineProps({
-    title: {
-        type: String,
+const props = defineProps({
+    appearance : {
+        type: Object,
     },
-    quote: {
-        type: String,
+    resource : {
+        type: Object,
     },
+    acl : {
+        type: Object,
+    }
 });
+
+console.log(props)
 </script>
 
 <template>
@@ -23,8 +28,11 @@ defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h1>{{ title }}</h1>
-                    <small>{{ quote }}</small>
+                    <h1>{{ appearance.title }}</h1>
+                    <h1>{{ appearance.singular_title }}</h1>
+                    <h1>{{ resource.model }}</h1>
+                    <h1>{{ resource.name }}</h1>
+                    <h1>{{ resource.short_name }}</h1>
                 </div>
             </div>
         </div> 
