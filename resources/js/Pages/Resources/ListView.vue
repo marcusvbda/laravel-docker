@@ -1,39 +1,28 @@
-<script setup>
+<script lang="ts" setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import ListView from '../../../../packages/lazarus/src/js/components/ListView.vue';
 
-const props = defineProps({
-    appearance : {
-        type: Object,
-    },
-    resource : {
-        type: Object,
-    },
-    acl : {
-        type: Object,
+defineProps({
+    payload : {
+        type : Object,
+        required : true
     }
 });
 
-console.log(props)
 </script>
 
 <template>
-    <Head title="Example" />
+    <Head :title="payload.appearance.title" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Example</h2>
-        </template>
+        <!-- <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{payload.appearance.title}}</h2>
+        </template> -->
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h1>{{ appearance.title }}</h1>
-                    <h1>{{ appearance.singular_title }}</h1>
-                    <h1>{{ resource.model }}</h1>
-                    <h1>{{ resource.name }}</h1>
-                    <h1>{{ resource.short_name }}</h1>
-                </div>
+                <ListView :payload="payload"/>
             </div>
         </div> 
     </AuthenticatedLayout>

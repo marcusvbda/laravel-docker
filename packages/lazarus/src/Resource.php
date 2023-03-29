@@ -12,7 +12,14 @@ class Resource
   {
     if (!$this->canViewList()) abort(403);
 
-    return Inertia::render($this->listView(), $this->listViewPayload());
+    return Inertia::render($this->listView(), [
+      'payload' => $this->listViewPayload()
+    ]);
+  }
+
+  protected function icon(): string
+  {
+    return "";
   }
 
   protected function resourceName(): string
@@ -39,7 +46,10 @@ class Resource
   public function defaultPayload(): array
   {
     return [
+      'colors' => config('lazarus.colors'),
       'appearance' => [
+        'create_btn_text' => $this->createBtnText(),
+        'icon' => $this->icon(),
         'title' => $this->title(),
         'singular_title' => $this->singularTitle(),
       ],
@@ -48,9 +58,19 @@ class Resource
         'short_name' => $this->resourceShortName(),
         'type' => $this->type(),
         'model' => $this->model(),
-      ],
-      'acl' => $this->aclPayload(),
+      ]
     ];
+  }
+
+  public function basicFilterPlaceholder(): string
+  {
+    return config('lazarus.datatable.default_basic_filter_placeholder', 'Encontrar ...');
+  }
+
+  public function createBtnText(): string
+  {
+    $createBtnText = config('lazarus.labels.create_btn_text');
+    return str_replace('{singularTitle}', $this->singularTitle(), $createBtnText);
   }
 
   public function listViewPayload(): array
@@ -68,6 +88,11 @@ class Resource
       'canDelete' => $this->canDelete(),
     ];
 
+    //add acl for entity
+    if ($entity) {
+      $payload = array_merge($payload, []);
+    }
+
     return $payload;
   }
 
@@ -78,7 +103,7 @@ class Resource
 
   public function singularTitle(): string
   {
-    $resourceShortName = $this->resourceShortName();
+    $resourceShortName = $this->title();
     return substr($resourceShortName, 0, -1);
   }
 

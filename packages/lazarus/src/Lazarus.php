@@ -2,6 +2,9 @@
 
 namespace Lazarus;
 
+use Illuminate\Support\Facades\Route;
+use Lazarus\Controllers\ResourceController;
+
 class Lazarus
 {
   public static function resource(String $resource): Resource
@@ -10,8 +13,8 @@ class Lazarus
     return $createdResource;
   }
 
-  public static function routes(): array
+  public static function routes(): void
   {
-    return [];
+    Route::post('resolve-resource-component', [ResourceController::class, 'resolveResourceComponent'])->name('lazarus.resolve-resource-component');
   }
 }

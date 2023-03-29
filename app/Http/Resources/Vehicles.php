@@ -11,4 +11,9 @@ class Vehicles extends Resource
   {
     return Vehicle::class;
   }
+
+  public function title(): string
+  {
+    return "Veículos";
+  }
 }
