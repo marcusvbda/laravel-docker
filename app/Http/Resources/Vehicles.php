@@ -23,7 +23,7 @@ class Vehicles extends Resource
     return [
       Column::make('#', 'id')->width("100px")->sortable(),
       Column::make('Nome', 'name')->sortable(),
-      Column::make('Marca', fn ($entity) => $entity),
+      Column::make('Marca', fn ($entity) => $entity->brand),
     ];
   }
 }

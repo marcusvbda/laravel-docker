@@ -41,9 +41,24 @@ const isShowResult = computed(() => {
   return !isLoading.value && data.value.length;
 })
 
-setTimeout(() => {
-  isLoading.value = false;
-}, 1000);
+const canSort = computed(() => {
+  return !isLoading.value && data.value.length ? true : false;
+})
+
+resourceResolver({
+  resource: props.resource.name,
+  action: 'resolveListData',
+  page : 1,
+  per_page : 10,
+  sort : '',
+  sort_type : '',
+  filter : '',
+},(result) => {
+  if(result.success){
+    data.value = result.list;
+    isLoading.value = false;
+  }
+})
 </script>
 
 <template>
@@ -55,16 +70,21 @@ setTimeout(() => {
         <table class="lazarus-viewlist--table">
           <thead>
             <tr>
-              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :isLoading="isLoading"/>
+              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort"/>
             </tr>
           </thead>
           <tbody>
-            <tr :class="`${isShowResult ? 'showing-result' : ''}`">
+            <tr v-if="!isShowResult" >
               <td v-if="isLoading" :colspan="colSpan" class="td-loading" />
               <td v-else-if="!data.length" :colspan="colSpan" class="td-nothing"> 
                 <span>{{ noResultText }}</span>
               </td>
             </tr>
+            <template v-else>
+              <tr v-for="(row,i) in data" :key="i" class="showing-result">
+                <td v-for="(col,j) in columns" :key="j" v-html="row[j]" />
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>

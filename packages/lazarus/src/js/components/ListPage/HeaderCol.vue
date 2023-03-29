@@ -6,7 +6,7 @@ const props = defineProps({
     type : Object,
     required : true
   },
-  isLoading : {
+  canSort : {
     type : Boolean,
     required : true
   }
@@ -26,7 +26,7 @@ const showDesc = computed(() => {
 });
 
 const handleSort = () =>{
-  if(props.isLoading) return;
+  if(!props.canSort) return;
   console.log('handleSort');
 }
 
@@ -51,6 +51,10 @@ const handleSort = () =>{
 .lazarus-viewlist--hlabel {
   display: flex;
   align-items: center;
+    &:hover {
+      transition: .5s;
+      filter : brightness(130%);
+    }
 
   .lazarus-viewlist--arrow-sort {
     height: 18px;

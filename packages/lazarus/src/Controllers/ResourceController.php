@@ -3,24 +3,30 @@
 namespace Lazarus\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ResourceController extends Controller
 {
-  public function resolveResourceComponent(Request $request)
+  public function resolveResourceComponent(Request $request): JsonResponse
   {
     return $this->{$request->action}($request);
   }
 
-  protected function resolveCreateBtn(Request $request)
+  protected function resolveCreateBtn(Request $request): JsonResponse
   {
     return response()->json(['can_create' => app()->make($request->resource)->canCreate()]);
   }
 
-  protected function resolveDataTable(Request $request)
+  private function getVisibleListFields($resource): array
+  {
+    return array_filter($resource->list(), fn ($column) => $column->visible);
+  }
+
+  protected function resolveDataTable(Request $request): JsonResponse
   {
     $resource = app()->make($request->resource);
-    $list = array_filter($resource->list(), fn ($column) => $column->visible);
+    $list = $this->getVisibleListFields($resource);
 
     return response()->json([
       'success' => true,
@@ -30,5 +36,31 @@ class ResourceController extends Controller
       'hover_color' => config('lazarus.datatable.hover_color', 'rgb(249, 250, 251)'),
       'loading_color' => config('lazarus.datatable.loading_color', 'rgb(0, 238, 255)'),
     ]);
+  }
+
+  protected function resolveListData(Request $request): JsonResponse
+  {
+    $resource = app()->make($request->resource);
+    $list = $this->getVisibleListFields($resource);
+    $data = [];
+    $total = 0;
+    if ($resource->type() === 'model') {
+      $query = app()->make($resource->model());
+
+      // filter here
+
+      $total = $query->count();
+      $result = $query->cursorPaginate($request->per_page, ['*'], 'page', $request->page);
+
+      foreach ($result as $entity) {
+        $row = [];
+        foreach ($list as $column) {
+          $row[] = @$column->handleAction($entity);
+        }
+        $data[] = $row;
+      }
+    }
+
+    return response()->json(['success' => true, "list" => $data, "total" => $total]);
   }
 }
