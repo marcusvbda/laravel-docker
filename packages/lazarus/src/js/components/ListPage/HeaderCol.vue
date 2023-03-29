@@ -1,0 +1,69 @@
+<script lang="ts" setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+  column : {
+    type : Object,
+    required : true
+  },
+  isLoading : {
+    type : Boolean,
+    required : true
+  }
+});
+
+
+const isSorting = computed(() => {
+  return props.column.sort === props.column.index
+});
+
+const showAsc = computed(() => {
+  return props.column.index && props.column.sort_type == "asc";
+});
+
+const showDesc = computed(() => {
+  return (props.column.index && props.column.sort_type == "desc" ) || props.column.sortable;
+});
+
+const handleSort = () =>{
+  if(props.isLoading) return;
+  console.log('handleSort');
+}
+
+</script>
+
+<template>
+    <th :style="{width: column.width}">
+      <a v-if="column.sortable" class="lazarus-viewlist--hlabel" href="#" :style="{cursor : column.sortable ? 'pointer' : 'default'}" @click="handleSort">
+        {{column.label}}        
+        <svg v-if="showAsc" :class="`lazarus-viewlist--arrow-sort asc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg " viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <svg v-else-if="showDesc" :class="`lazarus-viewlist--arrow-sort desc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </a>
+      <template v-else>{{column.label}}</template>
+    </th>
+</template>
+
+<style lang="scss">
+.lazarus-viewlist--hlabel {
+  display: flex;
+  align-items: center;
+
+  .lazarus-viewlist--arrow-sort {
+    height: 18px;
+    margin-left: 8px;
+    fill: var(--gray_700);
+
+    &.op-03 {
+      opacity: 0.3;
+    }
+
+    &.op-1 {
+      opacity: 1;
+    }
+  }
+}
+</style>

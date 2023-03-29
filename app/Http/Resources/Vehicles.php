@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Vehicle;
+use Lazarus\List\Column;
 use Lazarus\Resource;
 
 class Vehicles extends Resource
@@ -15,5 +16,14 @@ class Vehicles extends Resource
   public function title(): string
   {
     return "Veículos";
+  }
+
+  public function list(): array
+  {
+    return [
+      Column::make('#', 'id')->width("100px")->sortable(),
+      Column::make('Nome', 'name')->sortable(),
+      Column::make('Marca', fn ($entity) => $entity),
+    ];
   }
 }

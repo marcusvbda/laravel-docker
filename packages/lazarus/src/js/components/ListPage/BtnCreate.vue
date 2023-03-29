@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { resourceResolver } from '../utils';
+import { resourceResolver } from '../../utils';
 
 const props = defineProps({
   resource : {

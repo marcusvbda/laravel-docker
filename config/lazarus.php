@@ -8,6 +8,8 @@ return [
   'datatable' => [
     'default_basic_filter_placeholder' => 'Encontrar ...',
     'hover_color' => 'rgb(249, 250, 251)',
+    'loading_color' => 'rgb(0, 238, 255)',
+    'default_no_result_text' => 'Nenhum resultado encontrado',
   ],
 
   'colors' => [

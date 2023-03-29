@@ -136,4 +136,14 @@ class Resource
   {
     return '';
   }
+
+  public function list(): array
+  {
+    return [];
+  }
+
+  public function noListResultText(): string
+  {
+    return config('lazarus.datatable.default_no_result_text', 'Nenhum resultado encontrado');
+  }
 }

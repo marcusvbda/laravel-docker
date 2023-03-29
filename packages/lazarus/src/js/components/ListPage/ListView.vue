@@ -31,7 +31,7 @@ const colors = props.payload.colors ?? {};
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     @media(max-width: 900px) {
       flex-direction: column;
       align-items: flex-start;
@@ -41,7 +41,7 @@ const colors = props.payload.colors ?? {};
   .lazarus-viewlist--title {
     color: var(--gray_800);
     font-weight: 600;
-    font-size: 1.7rem;
+    font-size: 2rem;
     @media(max-width: 900px) {
       order: 1;
       text-align: center;
