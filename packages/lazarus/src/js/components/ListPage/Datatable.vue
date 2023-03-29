@@ -16,6 +16,8 @@ const searchText = ref('');
 const hoverColor = ref('');
 const loadingColor = ref('');
 const noResultText = ref('');
+const sort = ref('');
+const sortType = ref('');
 const columns = ref([]);
 
 resourceResolver({
@@ -56,6 +58,8 @@ resourceResolver({
 },(result) => {
   if(result.success){
     data.value = result.list;
+    sort.value = result.sort;
+    sortType.value = result.sort_type;
     isLoading.value = false;
   }
 })
@@ -70,7 +74,7 @@ resourceResolver({
         <table class="lazarus-viewlist--table">
           <thead>
             <tr>
-              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort"/>
+              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType"/>
             </tr>
           </thead>
           <tbody>

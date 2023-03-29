@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // for ($i = 0; $i < 50000; $i++) {
+        // for ($i = 1; $i < 1000000; $i++) {
         //     \App\Models\Vehicle::create([
         //         'name' => 'Vehicle ' . $i,
         //         'brand' => 'Brand ' . $i,

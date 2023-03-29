@@ -9,20 +9,18 @@ const props = defineProps({
   canSort : {
     type : Boolean,
     required : true
-  }
+  },
+  sort : String,
+  sortType : String
 });
 
 
 const isSorting = computed(() => {
-  return props.column.sort === props.column.index
+  return props.sort === props.column.index
 });
 
 const showAsc = computed(() => {
-  return props.column.index && props.column.sort_type == "asc";
-});
-
-const showDesc = computed(() => {
-  return (props.column.index && props.column.sort_type == "desc" ) || props.column.sortable;
+  return isSorting.value && props.sortType == "asc";
 });
 
 const handleSort = () =>{
@@ -34,12 +32,12 @@ const handleSort = () =>{
 
 <template>
     <th :style="{width: column.width}">
-      <a v-if="column.sortable" class="lazarus-viewlist--hlabel" href="#" :style="{cursor : column.sortable ? 'pointer' : 'default'}" @click="handleSort">
+      <a v-if="column.sortable && props.column.index" class="lazarus-viewlist--hlabel" href="#" :style="{cursor : column.sortable ? 'pointer' : 'default'}" @click="handleSort">
         {{column.label}}        
         <svg v-if="showAsc" :class="`lazarus-viewlist--arrow-sort asc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg " viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
         </svg>
-        <svg v-else-if="showDesc" :class="`lazarus-viewlist--arrow-sort desc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <svg v-else :class="`lazarus-viewlist--arrow-sort desc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
       </a>

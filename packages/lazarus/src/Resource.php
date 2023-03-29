@@ -146,4 +146,9 @@ class Resource
   {
     return config('lazarus.datatable.default_no_result_text', 'Nenhum resultado encontrado');
   }
+
+  public function defaultSort(): array
+  {
+    return ['id', 'desc'];
+  }
 }

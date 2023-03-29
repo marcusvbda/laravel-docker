@@ -44,13 +44,20 @@ class ResourceController extends Controller
     $list = $this->getVisibleListFields($resource);
     $data = [];
     $total = 0;
+    $defaultSort = $resource->defaultSort();
+    $sort = @$request->sort ? $request->sort : $defaultSort[0];
+    $sortType = @$request->sort_type ? $request->sort_type : $defaultSort[1];
     if ($resource->type() === 'model') {
       $query = app()->make($resource->model());
 
+      if (!$request->sort) {
+        $query = $query->orderBy($sort, $sortType);
+      }
+
       // filter here
 
-      $total = $query->count();
       $result = $query->cursorPaginate($request->per_page, ['*'], 'page', $request->page);
+      $total = $result->count();
 
       foreach ($result as $entity) {
         $row = [];
@@ -60,7 +67,6 @@ class ResourceController extends Controller
         $data[] = $row;
       }
     }
-
-    return response()->json(['success' => true, "list" => $data, "total" => $total]);
+    return response()->json(['success' => true, "list" => $data, "total" => $total, "sort_type" => $sortType, "sort" => $sort]);
   }
 }

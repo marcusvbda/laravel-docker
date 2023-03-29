@@ -26,4 +26,9 @@ class Vehicles extends Resource
       Column::make('Marca', fn ($entity) => $entity->brand),
     ];
   }
+
+  public function defaultSort(): array
+  {
+    return ['name', 'desc'];
+  }
 }
