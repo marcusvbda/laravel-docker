@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Vehicle;
-use Lazarus\List\Column;
+use Lazarus\list\Column;
 use Lazarus\Resource;
 
 class Vehicles extends Resource

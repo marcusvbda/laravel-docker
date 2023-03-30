@@ -32,9 +32,13 @@ class ResourceController extends Controller
       'success' => true,
       'columns' => $list,
       'no_result_text' => $resource->noListResultText(),
+      'per_page_options' => $resource->perPageOptions(),
+      'per_page_default' => $resource->perPageDefault(),
       'basic_filter_placeholder' => $resource->basicFilterPlaceholder(),
       'hover_color' => config('lazarus.datatable.hover_color', 'rgb(249, 250, 251)'),
-      'loading_color' => config('lazarus.datatable.loading_color', 'rgb(0, 238, 255)'),
+      'theme_color' => config('lazarus.datatable.theme_color', 'rgb(0, 238, 255)'),
+      'per_page_text' => $resource->perPageText(),
+      'total_list_text' => config('lazarus.datatable.total_list_text', 'Total de {total} registros'),
     ]);
   }
 
@@ -56,8 +60,8 @@ class ResourceController extends Controller
 
       // filter here
 
-      $result = $query->cursorPaginate($request->per_page, ['*'], 'page', $request->page);
-      $total = $result->count();
+      $total = $query->count();
+      $result = $query->paginate($request->per_page, ['*'], 'page', $request->page);
 
       foreach ($result as $entity) {
         $row = [];

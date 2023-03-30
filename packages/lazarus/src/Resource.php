@@ -151,4 +151,24 @@ class Resource
   {
     return ['id', 'desc'];
   }
+
+  public function perPageDefault(): int
+  {
+    return config('lazarus.datatable.default_per_page_value', 10);
+  }
+
+  public function perPageOptions(): array
+  {
+    return config('lazarus.datatable.default_per_page_options', [10, 25, 50, 100]);
+  }
+
+  public function totalListText(): string
+  {
+    return config('lazarus.datatable.total_list_text', 'Total de registros: {total}');
+  }
+
+  public function perPageText(): string
+  {
+    return config('lazarus.datatable.per_page_text', 'Por Página');
+  }
 }

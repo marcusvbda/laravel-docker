@@ -26,29 +26,25 @@ const colors = props.payload.colors ?? {};
 </template>
 
 <style lang="scss" scoped>
-.lazarus-viewlist {
-  .lazarus-viewlist--responsive-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 30px;
-    @media(max-width: 900px) {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  } 
-
-  .lazarus-viewlist--title {
-    color: var(--gray_800);
-    font-weight: 600;
-    font-size: 2rem;
-    @media(max-width: 900px) {
-      order: 1;
-      text-align: center;
-      width: 100%;
-      font-size: 2.5rem;
-    }
+.lazarus-viewlist .lazarus-viewlist--responsive-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 30px;
+  @media(max-width: 900px) {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
+} 
+.lazarus-viewlist--title {
+  color: var(--gray_900);
+  font-weight: 600;
+  font-size: 2rem;
+  @media(max-width: 900px) {
+    order: 1;
+    text-align: center;
+    width: 100%;
+    font-size: 2.5rem;
+  }
 }
 </style>

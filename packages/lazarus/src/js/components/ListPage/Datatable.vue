@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { resourceResolver } from '../../utils';
 import HeaderCol from './HeaderCol.vue';
+import Paginator from './Paginator.vue';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -14,11 +15,38 @@ const data = ref([]);
 const visible = ref(false);
 const searchText = ref('');
 const hoverColor = ref('');
-const loadingColor = ref('');
+const themeColor = ref('');
 const noResultText = ref('');
 const sort = ref('');
 const sortType = ref('');
 const columns = ref([]);
+
+const perPageOptions = ref([]);
+const page = ref(1);
+const perPage = ref(10);
+const total = ref(0);
+const totalText = ref('');
+const perPageText = ref('');
+
+const fetchData = () => {
+  resourceResolver({
+    resource: props.resource.name,
+    action: 'resolveListData',
+    page : page.value,
+    per_page : perPage.value,
+    sort : '',
+    sort_type : '',
+    filter : '',
+  },(result) => {
+    if(result.success){
+      data.value = result.list;
+      sort.value = result.sort;
+      sortType.value = result.sort_type;
+      total.value = result.total;
+      isLoading.value = false;
+    }
+  })
+}
 
 resourceResolver({
   resource: props.resource.name,
@@ -28,9 +56,14 @@ resourceResolver({
     columns.value = result.columns;
     searchText.value = result.basic_filter_placeholder;
     hoverColor.value = result.hover_color;
-    loadingColor.value = result.loading_color;
+    themeColor.value = result.theme_color;
     noResultText.value = result.no_result_text;
+    perPage.value = result.per_page_default;
+    perPageOptions.value = result.per_page_options;
+    totalText.value = result.total_list_text;
+    perPageText.value = result.per_page_text;
     visible.value = true;
+    fetchData();
   }
 })
 
@@ -47,26 +80,10 @@ const canSort = computed(() => {
   return !isLoading.value && data.value.length ? true : false;
 })
 
-resourceResolver({
-  resource: props.resource.name,
-  action: 'resolveListData',
-  page : 1,
-  per_page : 10,
-  sort : '',
-  sort_type : '',
-  filter : '',
-},(result) => {
-  if(result.success){
-    data.value = result.list;
-    sort.value = result.sort;
-    sortType.value = result.sort_type;
-    isLoading.value = false;
-  }
-})
 </script>
 
 <template>
-    <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--loading-datatable-color' : loadingColor}">
+    <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
         <input class="lazarus-viewlist--filter-input"  :placeholder="searchText" :disabled="isLoading"/>
       </div>
@@ -92,108 +109,104 @@ resourceResolver({
           </tbody>
         </table>
       </div>
-      conteudo bottom 
+      <Paginator :total="total" :perPage="perPage" :page="page" :perPageOptions="perPageOptions" :totalText="totalText" :perPageText="perPageText"/>
     </div>  
 </template>
 
 <style lang="scss" scoped>
+.lazarus-viewlist .lazarus-viewlist--datatable {
+    background-color: white;
+    border-radius: 8px;
+    border : 1px solid #e2e8f0;
+    .lazarus-viewlist--filter-row {
+      display: flex;
+      padding: 8px 16px;
+      .lazarus-viewlist--filter-input {
+        margin-left: auto;
+        border: 1px solid var(--gray_600);
+        padding: 8px 16px;
+        border-radius: 8px;
+        min-width: 300px;
 
-
-.lazarus-viewlist {
-    .lazarus-viewlist--datatable {
-      background-color: white;
-      border-radius: 8px;
-      border : 1px solid #e2e8f0;
-      .lazarus-viewlist--filter-row {
-        display: flex;
-        padding: 8px;
-        .lazarus-viewlist--filter-input {
-          margin-left: auto;
-          border: 1px solid var(--gray_600);
-          padding: 8px 16px;
-          border-radius: 8px;
-          min-width: 300px;
-
-          &:focus,&:active,&:hover,&:visited{
-            border-color:var(--gray_700);
-          }
-
-          @media(max-width: 900px) {
-            width: 100%;
-            padding: 16px 16px;
-          }
+        @media(max-width: 900px) {
+          width: 100%;
+          padding: 16px 16px;
         }
       }
-    .lazarus-viewlist--responsive-table {
+    }
+  .lazarus-viewlist--responsive-table {
+    width: 100%;
+    overflow-x: auto;
+
+    &.is-loading {
+      overflow-x: hidden;
+    }
+    .lazarus-viewlist--table {
       width: 100%;
-      overflow-x: auto;
 
-      &.is-loading {
-        overflow-x: hidden;
+      thead tr th {
+        background-color: var(--gray_500);
+        border-top: 1px solid var(--gray_600);
+        border-bottom: 1px solid var(--gray_600);
+        color : var(--gray_800);
+        padding:  0.5rem 1rem;
+        text-align: left;
+        white-space: nowrap;
       }
-      .lazarus-viewlist--table {
-        width: 100%;
-        margin-bottom: 20px;
-
-        thead tr th {
-          background-color: var(--gray_500);
+      tbody tr {
+        &.showing-result:hover {
+          background-color: var(--hover-datatable-color);
+        }
+        td {
+          padding:  1.2rem 1rem;
+          text-align: left;
           border-top: 1px solid var(--gray_600);
           border-bottom: 1px solid var(--gray_600);
-          color : var(--gray_700);
-          padding:  0.5rem 1rem;
-          text-align: left;
           white-space: nowrap;
-        }
-        tbody tr {
-          &.showing-result:hover {
-            background-color: var(--hover-datatable-color);
+          font-size: .9rem;
+          color: var(--gray_900);
+          @media(max-width: 900px) {
+            font-size: 1rem;
           }
-          td {
-            padding:  1.2rem 1rem;
-            text-align: left;
-            border-top: 1px solid var(--gray_600);
-            border-bottom: 1px solid var(--gray_600);
-            white-space: nowrap;
 
-            &.td-nothing {
-              span {
-                display: flex;
-                align-self: center;
-                justify-content: center;
-                padding: 50px 0;
-                color : var(--gray_700);
+          &.td-nothing {
+            span {
+              display: flex;
+              align-self: center;
+              justify-content: center;
+              padding: 50px 0;
+              color : var(--gray_700);
+            }
+          }
+
+          &.td-loading {
+            padding: 7px 20px ;
+
+            @keyframes loading-animation {
+              0%   {
+                transform: rotateY(0deg);
+              }
+              33%   {
+                transform: rotateY(110deg);
+              }
+              99%   {
+                transform: rotateY(0deg);
               }
             }
 
-            &.td-loading {
-              padding: 7px 20px ;
-
-              @keyframes loading-animation {
-                0%   {
-                  transform: rotateY(0deg);
-                }
-                33%   {
-                  transform: rotateY(110deg);
-                }
-                99%   {
-                  transform: rotateY(0deg);
-                }
-              }
-
-              &::after {
-                content: "";
-                display: block;
-                background-color: var(--loading-datatable-color);
-                animation: loading-animation 2.3s infinite;
-                height: 5px;
-                width: 100%;
-              }
+            &::after {
+              content: "";
+              display: block;
+              background-color: var(--theme-datatable-color);
+              animation: loading-animation 2.3s infinite;
+              height: 5px;
+              width: 100%;
             }
           }
         }
       }
-      
     }
+    
   }
 }
 </style>

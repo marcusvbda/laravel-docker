@@ -1,6 +1,6 @@
 <?php
 
-namespace Lazarus\List;
+namespace Lazarus\list;
 
 class Column
 {

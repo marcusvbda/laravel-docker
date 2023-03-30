@@ -57,7 +57,7 @@ const handleSort = () =>{
   .lazarus-viewlist--arrow-sort {
     height: 18px;
     margin-left: 8px;
-    fill: var(--gray_700);
+    fill: var(--gray_800);
 
     &.op-03 {
       opacity: 0.3;
