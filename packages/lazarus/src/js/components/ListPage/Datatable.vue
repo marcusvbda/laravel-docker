@@ -2,7 +2,8 @@
 import { resourceResolver } from '../../utils';
 import HeaderCol from './HeaderCol.vue';
 import Paginator from './Paginator.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { setUrlParam,getUrlParam} from '../../utils';
 
 const props = defineProps({
   resource : {
@@ -10,9 +11,11 @@ const props = defineProps({
     required : true
   }
 });
+
 const isLoading = ref(true);
 const data = ref([]);
 const visible = ref(false);
+const basicFilter = ref(getUrlParam('_',''));
 const searchText = ref('');
 const hoverColor = ref('');
 const themeColor = ref('');
@@ -20,23 +23,25 @@ const noResultText = ref('');
 const sort = ref('');
 const sortType = ref('');
 const columns = ref([]);
+const filterTimeout = ref(0);
 
 const perPageOptions = ref([]);
-const page = ref(1);
+const page = ref(Number(getUrlParam('page',1)));
 const perPage = ref(10);
 const total = ref(0);
 const totalText = ref('');
 const perPageText = ref('');
 
-const fetchData = () => {
+const fetchData = (pageValue:Number = 1,perPageValue:any = null) => {
+  isLoading.value = true;
   resourceResolver({
     resource: props.resource.name,
     action: 'resolveListData',
-    page : page.value,
-    per_page : perPage.value,
+    page : pageValue,
+    per_page : perPageValue ? perPageValue : perPage.value,
     sort : '',
     sort_type : '',
-    filter : '',
+    filter : basicFilter.value,
   },(result) => {
     if(result.success){
       data.value = result.list;
@@ -58,12 +63,12 @@ resourceResolver({
     hoverColor.value = result.hover_color;
     themeColor.value = result.theme_color;
     noResultText.value = result.no_result_text;
-    perPage.value = result.per_page_default;
+    perPage.value = Number(getUrlParam('per-page',result.per_page_default));
     perPageOptions.value = result.per_page_options;
     totalText.value = result.total_list_text;
     perPageText.value = result.per_page_text;
     visible.value = true;
-    fetchData();
+    fetchData(1);
   }
 })
 
@@ -80,12 +85,60 @@ const canSort = computed(() => {
   return !isLoading.value && data.value.length ? true : false;
 })
 
+watch(() => basicFilter.value, (val) => {
+  if(!isLoading.value) { 
+    clearTimeout(filterTimeout.value);
+    filterTimeout.value = setTimeout(() => {
+      setUrlParam('_', val);
+      page.value = 1;
+      setUrlParam('page', 1);
+      fetchData(1);
+    }, 800);
+  }
+})
+
+const setNewPage = (val) => {
+  if(isLoading.value) return
+  page.value = val;
+  setUrlParam('page', val);
+  fetchData(val)
+}
+
+const clearFilter = () => {
+  if(isLoading.value) return
+  basicFilter.value = '';
+  setUrlParam('_', '');
+  fetchData(1);
+}
+
+const setNewPerPage = (val) => {
+  if(isLoading.value) return
+  perPage.value = val;
+  page.value = 1;
+  setUrlParam('page', 1);
+  setUrlParam('per-page', val);
+  fetchData(1,val);
+}
 </script>
 
 <template>
     <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
-        <input class="lazarus-viewlist--filter-input"  :placeholder="searchText" :disabled="isLoading"/>
+        <div class="lazarus-viewlist--filter-input">
+          <input v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
+          <a href="#" class="clearable" @click.prevent="clearFilter">
+            <svg viewPort="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <line x1="1" y1="11" 
+                    x2="11" y2="1" 
+                    stroke="black" 
+                    stroke-width="2"/>
+              <line x1="1" y1="1" 
+                    x2="11" y2="11" 
+                    stroke="black" 
+                    stroke-width="2"/>
+          </svg>
+          </a>
+        </div>
       </div>
       <div :class="`lazarus-viewlist--responsive-table ${isLoading ? 'is-loading' : ''}`">
         <table class="lazarus-viewlist--table">
@@ -109,7 +162,16 @@ const canSort = computed(() => {
           </tbody>
         </table>
       </div>
-      <Paginator :total="total" :perPage="perPage" :page="page" :perPageOptions="perPageOptions" :totalText="totalText" :perPageText="perPageText"/>
+      <Paginator 
+        :total="total" 
+        :perPage="perPage" 
+        :page="page" 
+        :perPageOptions="perPageOptions" 
+        :totalText="totalText" 
+        :perPageText="perPageText"
+        @on-page-change="setNewPage"
+        @on-per-page-change="setNewPerPage"
+      />
     </div>  
 </template>
 
@@ -122,9 +184,40 @@ const canSort = computed(() => {
       display: flex;
       padding: 8px 16px;
       .lazarus-viewlist--filter-input {
+        display: flex;
         margin-left: auto;
+        @media(max-width: 900px) {
+          width: 100%;
+        }
+        position: relative;
+        .clearable {
+          height: 100%;
+          width: 30px;
+          display: block;
+          right: 0;
+          font-size: .875rem;
+          color: var(--gray_800);
+          padding-top: 12px;
+          position: absolute;
+          cursor: pointer;
+          transition: .5s;
+          svg line {
+            stroke : var(--gray_800);
+          }
+
+          &:hover {
+            svg line {
+              stroke : black;
+            }
+          }
+        }
+
+       input {
+        font-size: .875rem;
+        color: var(--gray_800);
         border: 1px solid var(--gray_600);
         padding: 8px 16px;
+        padding-right: 40px;
         border-radius: 8px;
         min-width: 300px;
 
@@ -132,6 +225,7 @@ const canSort = computed(() => {
           width: 100%;
           padding: 16px 16px;
         }
+       }
       }
     }
   .lazarus-viewlist--responsive-table {
@@ -153,6 +247,7 @@ const canSort = computed(() => {
         text-align: left;
         white-space: nowrap;
       }
+
       tbody tr {
         &.showing-result:hover {
           background-color: var(--hover-datatable-color);

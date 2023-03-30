@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { setUrlParam } from '../../utils';
+
 const props = defineProps({
   total : Number,
   perPage : Number,
@@ -11,6 +13,7 @@ const props = defineProps({
 
 const selectedPerPage = ref(props.perPage);
 const selectedPage = ref(props.page);
+const emit = defineEmits(["on-page-change","on-per-page-change"])
 
 const computedTotalText = computed(() => {
   return props.totalText.replace('{total}', String(props.total));
@@ -47,6 +50,20 @@ const btnPaginateClick = (value) => {
     selectedPage.value = value;
   }
 }
+
+watch(() => props.page, (val) => {
+  selectedPage.value = val
+})
+
+watch(() => selectedPage.value, (val) => {
+  setUrlParam('page',val);
+  emit('on-page-change', val)
+})
+
+watch(() => selectedPerPage.value, (val) => {
+  setUrlParam('per-page',val);
+  emit('on-per-page-change', val)
+})
 
 </script>
 

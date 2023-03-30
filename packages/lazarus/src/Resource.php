@@ -171,4 +171,22 @@ class Resource
   {
     return config('lazarus.datatable.per_page_text', 'Por Página');
   }
+
+  public function search(): array
+  {
+    return [];
+  }
+
+  public function basicFilterHandler($query, $value)
+  {
+    return $query->where(function ($query) use ($value) {
+      foreach ($this->search() as $search) {
+        if (gettype($search) === 'string') {
+          $query->orWhere($search, 'like', "%$value%");
+        } else {
+          $query = $search($query, $value);
+        }
+      }
+    });
+  }
 }

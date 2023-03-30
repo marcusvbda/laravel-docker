@@ -58,7 +58,9 @@ class ResourceController extends Controller
         $query = $query->orderBy($sort, $sortType);
       }
 
-      // filter here
+      $query = $query->when(@$request->filter, function ($query) use ($resource, $request) {
+        return $resource->basicFilterHandler($query, @$request->filter);
+      });
 
       $total = $query->count();
       $result = $query->paginate($request->per_page, ['*'], 'page', $request->page);

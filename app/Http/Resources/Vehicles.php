@@ -27,8 +27,14 @@ class Vehicles extends Resource
     ];
   }
 
-  public function defaultSort(): array
+  public function search(): array
   {
-    return ['name', 'desc'];
+    return [
+      'id',
+      'name',
+      function ($query, $value) {
+        $query->orWhere('brand', 'like', "%$value%");
+      }
+    ];
   }
 }
