@@ -14,7 +14,7 @@ const visible = ref(false);
 resourceResolver({
   resource: props.resource.name,
   action: 'resolveCreateBtn'
-},(result) => {
+}).then((result) => {
   if(result.can_create) {
     visible.value = true;
   }

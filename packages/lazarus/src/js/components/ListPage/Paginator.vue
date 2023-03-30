@@ -83,13 +83,21 @@ watch(() => selectedPerPage.value, (val) => {
         <template v-if="computedBtnList.length > 1" >
           <ol class="paginator-btn-list">
             <li v-if="selectedPage > 1" @click="btnPaginateClick('prev')">
-              <span>{{ '<' }}</span>
+              <span>
+                <svg class="w-5 h-5 rtl:scale-x-[-1]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </span>
             </li>
             <li v-for="(btn,i) in computedBtnList" :class="`${selectedPage == btn ? 'active' : ''}`" @click="btnPaginateClick(btn)">
               <span >{{btn}}</span>
             </li>
             <li v-if="selectedPage < computedBtnList[computedBtnList.length - 1]" class="prev-next"  @click="btnPaginateClick('next')">
-              <span>{{ '>' }}</span>
+              <span>
+                <svg class="w-5 h-5 rtl:scale-x-[-1]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </span>
             </li>
           </ol>
         </template>

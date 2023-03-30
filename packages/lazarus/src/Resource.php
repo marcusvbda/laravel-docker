@@ -4,6 +4,7 @@ namespace Lazarus;
 
 use Inertia\Inertia;
 use Inertia\Response;
+use Lazarus\list\Column;
 use ReflectionClass;
 
 class Resource
@@ -56,7 +57,6 @@ class Resource
       'resource' => [
         'name' => $this->resourceName(),
         'short_name' => $this->resourceShortName(),
-        'type' => $this->type(),
         'model' => $this->model(),
       ]
     ];
@@ -127,11 +127,6 @@ class Resource
     return true;
   }
 
-  public function type(): string
-  {
-    return 'model';
-  }
-
   public function model(): string
   {
     return '';
@@ -139,7 +134,9 @@ class Resource
 
   public function list(): array
   {
-    return [];
+    return [
+      Column::make('#', 'id')->width("100px")->sortable(),
+    ];
   }
 
   public function noListResultText(): string

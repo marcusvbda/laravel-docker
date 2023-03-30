@@ -14,6 +14,8 @@ const props = defineProps({
   sortType : String
 });
 
+const emit = defineEmits(["on-click-sort"])
+
 
 const isSorting = computed(() => {
   return props.sort === props.column.index
@@ -25,14 +27,14 @@ const showAsc = computed(() => {
 
 const handleSort = () =>{
   if(!props.canSort) return;
-  console.log('handleSort');
+  emit('on-click-sort',[props.column.index,showAsc.value ? 'desc' : 'asc'])
 }
 
 </script>
 
 <template>
     <th :style="{width: column.width}">
-      <a v-if="column.sortable && props.column.index" class="lazarus-viewlist--hlabel" href="#" :style="{cursor : column.sortable ? 'pointer' : 'default'}" @click="handleSort">
+      <a v-if="column.sortable && props.column.index" class="lazarus-viewlist--hlabel" href="#" :style="{cursor : column.sortable ? 'pointer' : 'default'}" @click.prevent="handleSort">
         {{column.label}}        
         <svg v-if="showAsc" :class="`lazarus-viewlist--arrow-sort asc ${isSorting ? 'op-1' : 'op-03'}`" xmlns="http://www.w3.org/2000/svg " viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>

@@ -15,13 +15,14 @@ const props = defineProps({
 const isLoading = ref(true);
 const data = ref([]);
 const visible = ref(false);
+const showBasicFilter = ref(false);
 const basicFilter = ref(getUrlParam('_',''));
 const searchText = ref('');
 const hoverColor = ref('');
 const themeColor = ref('');
 const noResultText = ref('');
-const sort = ref('');
-const sortType = ref('');
+const sort = ref(getUrlParam('sort',''));
+const sortType = ref(getUrlParam('sort-type',''));
 const columns = ref([]);
 const filterTimeout = ref(0);
 
@@ -39,10 +40,10 @@ const fetchData = (pageValue:Number = 1,perPageValue:any = null) => {
     action: 'resolveListData',
     page : pageValue,
     per_page : perPageValue ? perPageValue : perPage.value,
-    sort : '',
-    sort_type : '',
+    sort : sort.value,
+    sort_type : sortType.value,
     filter : basicFilter.value,
-  },(result) => {
+  }).then((result) => {
     if(result.success){
       data.value = result.list;
       sort.value = result.sort;
@@ -56,9 +57,10 @@ const fetchData = (pageValue:Number = 1,perPageValue:any = null) => {
 resourceResolver({
   resource: props.resource.name,
   action: 'resolveDataTable'
-},(result) => {
+}).then((result) => {
   if(result.success){
     columns.value = result.columns;
+    showBasicFilter.value = result.show_basic_filter;
     searchText.value = result.basic_filter_placeholder;
     hoverColor.value = result.hover_color;
     themeColor.value = result.theme_color;
@@ -119,12 +121,21 @@ const setNewPerPage = (val) => {
   setUrlParam('per-page', val);
   fetchData(1,val);
 }
+
+const sortClickHandle = (val) => {
+  if(isLoading.value) return
+  sort.value = val[0];
+  setUrlParam('sort', val[0]);
+  sortType.value = val[1];
+  setUrlParam('sort-type', val[1]);
+  fetchData(page.value,perPage.value);
+}
 </script>
 
 <template>
     <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
-        <div class="lazarus-viewlist--filter-input">
+        <div class="lazarus-viewlist--filter-input" v-if="showBasicFilter">
           <input v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
           <a href="#" class="clearable" @click.prevent="clearFilter">
             <svg viewPort="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -144,7 +155,7 @@ const setNewPerPage = (val) => {
         <table class="lazarus-viewlist--table">
           <thead>
             <tr>
-              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType"/>
+              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType" @on-click-sort="sortClickHandle"/>
             </tr>
           </thead>
           <tbody>
@@ -192,17 +203,24 @@ const setNewPerPage = (val) => {
         position: relative;
         .clearable {
           height: 100%;
-          width: 30px;
-          display: block;
+          width: 50px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           right: 0;
           font-size: .875rem;
           color: var(--gray_800);
-          padding-top: 12px;
           position: absolute;
           cursor: pointer;
           transition: .5s;
-          svg line {
-            stroke : var(--gray_800);
+
+          svg {
+            width: 12px;
+            height: 12px;
+
+            line {
+              stroke : var(--gray_800);
+            }
           }
 
           &:hover {
@@ -217,7 +235,7 @@ const setNewPerPage = (val) => {
         color: var(--gray_800);
         border: 1px solid var(--gray_600);
         padding: 8px 16px;
-        padding-right: 40px;
+        padding-right: 53px;
         border-radius: 8px;
         min-width: 300px;
 
