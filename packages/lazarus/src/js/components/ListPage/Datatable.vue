@@ -5,6 +5,7 @@ import Paginator from './Paginator.vue';
 import { ref, computed, watch } from 'vue';
 import { setUrlParam,getUrlParam} from '../../utils';
 import ComponentProxy from '../ComponentProxy.vue';
+import InputText from '../InputText.vue';
 
 const props = defineProps({
   resource : {
@@ -17,6 +18,7 @@ const isLoading = ref(true);
 const data = ref([]);
 const visible = ref(false);
 const showBasicFilter = ref(false);
+const especificFilter = ref({});
 const basicFilter = ref(getUrlParam('_',''));
 const searchText = ref('');
 const hoverColor = ref('');
@@ -107,13 +109,6 @@ const setNewPage = (val) => {
   fetchData(val)
 }
 
-const clearFilter = () => {
-  if(isLoading.value) return
-  basicFilter.value = '';
-  setUrlParam('_', '');
-  fetchData(1);
-}
-
 const setNewPerPage = (val) => {
   if(isLoading.value) return
   perPage.value = val;
@@ -140,27 +135,13 @@ const checkType = (val,type) => {
 <template>
     <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
-        <div class="lazarus-viewlist--filter-input" v-if="showBasicFilter">
-          <input v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
-          <a href="#" class="clearable" @click.prevent="clearFilter">
-            <svg viewPort="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg">
-              <line x1="1" y1="11" 
-                    x2="11" y2="1" 
-                    stroke="black" 
-                    stroke-width="2"/>
-              <line x1="1" y1="1" 
-                    x2="11" y2="11" 
-                    stroke="black" 
-                    stroke-width="2"/>
-          </svg>
-          </a>
-        </div>
+        <InputText v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
       </div>
       <div :class="`lazarus-viewlist--responsive-table ${isLoading ? 'is-loading' : ''}`">
         <table class="lazarus-viewlist--table">
           <thead>
             <tr>
-              <HeaderCol  v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType" @on-click-sort="sortClickHandle"/>
+              <HeaderCol v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType" @on-click-sort="sortClickHandle"/>
             </tr>
           </thead>
           <tbody>
@@ -206,57 +187,6 @@ const checkType = (val,type) => {
     .lazarus-viewlist--filter-row {
       display: flex;
       padding: 8px 16px;
-      .lazarus-viewlist--filter-input {
-        display: flex;
-        margin-left: auto;
-        @media(max-width: 900px) {
-          width: 100%;
-        }
-        position: relative;
-        .clearable {
-          height: 100%;
-          width: 50px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          right: 0;
-          font-size: .875rem;
-          color: var(--gray_800);
-          position: absolute;
-          cursor: pointer;
-          transition: .5s;
-
-          svg {
-            width: 12px;
-            height: 12px;
-
-            line {
-              stroke : var(--gray_800);
-            }
-          }
-
-          &:hover {
-            svg line {
-              stroke : black;
-            }
-          }
-        }
-
-       input {
-        font-size: .875rem;
-        color: var(--gray_800);
-        border: 1px solid var(--gray_600);
-        padding: 8px 16px;
-        padding-right: 53px;
-        border-radius: 8px;
-        min-width: 300px;
-
-        @media(max-width: 900px) {
-          width: 100%;
-          padding: 16px 16px;
-        }
-       }
-      }
     }
   .lazarus-viewlist--responsive-table {
     width: 100%;
@@ -276,6 +206,10 @@ const checkType = (val,type) => {
         padding:  0.5rem 1rem;
         text-align: left;
         white-space: nowrap;
+
+        &.header-filter {
+          background-color: white;
+        }
       }
 
       tbody tr {

@@ -18,6 +18,7 @@ class Column
     $this->action = $action;
     $this->sortable = false;
     $this->visible = true;
+    $this->filter = [];
     $this->width = "auto";
   }
 

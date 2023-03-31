@@ -12,11 +12,11 @@ class ResourceController extends Controller
 {
   public function resolveResourceComponent(Request $request): JsonResponse
   {
-    // try {
+    try {
       return $this->{$request->action}($request);
-    // } catch (Error $e) {
-    //   return response()->json(['success' => false, 'message' => $e->getMessage()]);
-    // }
+    } catch (Error $e) {
+      return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
   }
 
   protected function resolveCreateBtn(Request $request): JsonResponse

@@ -12,7 +12,7 @@ class VueComponent
   public function __construct(string $component)
   {
     $this->component = $component;
-    $this->componentOptions = ["component" => $component];
+    $this->componentOptions = ["component" => $component, "attributes" => $this->attributes, "text" => $this->text];
   }
 
   public static function make(string $tag): VueComponent
@@ -22,15 +22,15 @@ class VueComponent
 
   public function text($text): VueComponent
   {
-    $this->text = @$value?->rendered ?? $text;
-    $this->componentOptions = array_merge(["text" => $text],$this->componentOptions);
+    $this->text = @$text?->rendered ?? $text;
+    $this->componentOptions["text"] = $this->text;
     return $this;
   }
 
   public function attributes(array $attributes): VueComponent
   {
     $this->attributes = $attributes;
-    $this->componentOptions = array_merge(["attributes" => $attributes],$this->componentOptions);
+    $this->componentOptions["attributes"] = $this->attributes;
     return $this;
   }
 }
