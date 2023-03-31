@@ -22,7 +22,7 @@ class Html
 
   public function text($value): Html
   {
-    $this->text = @$value->rendered ?? $value;
+    $this->text = @$value?->rendered ?? $value;
     $this->render();
     return $this;
   }

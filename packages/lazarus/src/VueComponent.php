@@ -20,16 +20,16 @@ class VueComponent
     return new VueComponent($tag);
   }
 
-  public function text($value): VueComponent
+  public function text($text): VueComponent
   {
-    $this->text = @$value->rendered ?? $value;
+    $this->text = @$value?->rendered ?? $text;
     $this->componentOptions = array_merge(["text" => $text],$this->componentOptions);
     return $this;
   }
 
-  public function attributes(array $payload): VueComponent
+  public function attributes(array $attributes): VueComponent
   {
-    $this->attributes = $payload;
+    $this->attributes = $attributes;
     $this->componentOptions = array_merge(["attributes" => $attributes],$this->componentOptions);
     return $this;
   }

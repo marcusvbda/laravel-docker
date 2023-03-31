@@ -4,6 +4,7 @@ import HeaderCol from './HeaderCol.vue';
 import Paginator from './Paginator.vue';
 import { ref, computed, watch } from 'vue';
 import { setUrlParam,getUrlParam} from '../../utils';
+import ComponentProxy from '../ComponentProxy.vue';
 
 const props = defineProps({
   resource : {
@@ -174,7 +175,9 @@ const checkType = (val,type) => {
                 <template v-for="(col,j) in columns">
                   <td  v-if="checkType(row[j],'string') || checkType(row[j],'number')" :key="j" v-html="row[j]" />
                   <td v-else>
-                    <component :is="row[j].component" />
+                    <ComponentProxy :name="row[j].component" :attributes="row[j].attributes">
+                      {{ row[j].text ? row[j].text : '' }}
+                    </ComponentProxy>
                   </td>
                 </template>
               </tr>
