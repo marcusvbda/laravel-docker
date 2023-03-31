@@ -12,11 +12,11 @@ class ResourceController extends Controller
 {
   public function resolveResourceComponent(Request $request): JsonResponse
   {
-    try {
+    // try {
       return $this->{$request->action}($request);
-    } catch (Error $e) {
-      return response()->json(['success' => false, 'message' => $e->getMessage()]);
-    }
+    // } catch (Error $e) {
+    //   return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    // }
   }
 
   protected function resolveCreateBtn(Request $request): JsonResponse
@@ -55,7 +55,6 @@ class ResourceController extends Controller
 
   protected function resolveListData(Request $request): JsonResponse
   {
-    try {
       $resource = app()->make($request->resource);
       $list = $this->getVisibleListFields($resource);
       $data = [];
@@ -91,8 +90,5 @@ class ResourceController extends Controller
         $data[] = $row;
       }
       return response()->json(['success' => true, "list" => $data, "total" => $total, "sort_type" => $sortType, "sort" => $sort]);
-    } catch (Error $e) {
-      return response()->json(['success' => false, 'message' => $e->getMessage()]);
-    }
   }
 }

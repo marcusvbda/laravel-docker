@@ -51,6 +51,7 @@ const handleSort = () =>{
 .lazarus-viewlist--hlabel {
   display: flex;
   align-items: center;
+  text-decoration: none;
     &:hover {
       transition: .5s;
       filter : brightness(130%);

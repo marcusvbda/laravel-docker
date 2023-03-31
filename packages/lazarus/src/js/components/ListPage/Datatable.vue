@@ -130,6 +130,10 @@ const sortClickHandle = (val) => {
   setUrlParam('sort-type', val[1]);
   fetchData(page.value,perPage.value);
 }
+
+const checkType = (val,type) => {
+  return typeof val === type;
+}
 </script>
 
 <template>
@@ -167,7 +171,12 @@ const sortClickHandle = (val) => {
             </tr>
             <template v-else>
               <tr v-for="(row,i) in data" :key="i" class="showing-result">
-                <td v-for="(col,j) in columns" :key="j" v-html="row[j]" />
+                <template v-for="(col,j) in columns">
+                  <td  v-if="checkType(row[j],'string') || checkType(row[j],'number')" :key="j" v-html="row[j]" />
+                  <td v-else>
+                    <component :is="row[j].component" />
+                  </td>
+                </template>
               </tr>
             </template>
           </tbody>

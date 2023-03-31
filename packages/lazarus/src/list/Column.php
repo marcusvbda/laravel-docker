@@ -34,8 +34,10 @@ class Column
   public function handleAction($entity)
   {
     if ($this->index) return $entity->{$this->index};
-
-    return $this->action->__invoke($entity);
+    $result =  $this->action->__invoke($entity);
+    if(@$result?->rendered) return $result->rendered;
+    if(@$result?->componentOptions) return $result->componentOptions;
+    return $result;
   }
 
   public function width(string $value): Column
