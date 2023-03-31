@@ -22,7 +22,15 @@ class Html
 
   public function text($value): Html
   {
-    $this->text = @$value?->rendered ?? $value;
+    $valueText = "";
+    if(in_array(gettype($value),["string","object"])) {
+      $valueText = @$value?->rendered ?? $value;
+    } else if(gettype($value) == "array") {
+      foreach ($value as $key => $item) {
+        $valueText .= @$item?->rendered ?? $item;
+      }
+    }
+    $this->text = $valueText;
     $this->render();
     return $this;
   }

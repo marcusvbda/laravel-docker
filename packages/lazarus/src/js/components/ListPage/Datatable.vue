@@ -222,7 +222,7 @@ const checkType = (val,type) => {
           border-top: 1px solid var(--gray_600);
           border-bottom: 1px solid var(--gray_600);
           white-space: nowrap;
-          font-size: .9rem;
+          font-size: .8rem;
           color: var(--gray_900);
           @media(max-width: 900px) {
             font-size: 1rem;

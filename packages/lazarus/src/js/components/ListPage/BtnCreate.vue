@@ -37,6 +37,7 @@ resourceResolver({
     border-radius: 8px;
     font-weight: 500;
     line-height: 1.25rem;
+    font-size: .875rem;
     background-color: var(--primary);
     &:hover:enabled {
       filter: brightness(150%);

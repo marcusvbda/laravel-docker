@@ -39,7 +39,7 @@ const colors = props.payload.colors ?? {};
 .lazarus-viewlist--title {
   color: var(--gray_900);
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 1.8rem;
   @media(max-width: 900px) {
     order: 1;
     text-align: center;

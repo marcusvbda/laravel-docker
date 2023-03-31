@@ -27,9 +27,10 @@ class Vehicles extends Resource
       Column::make('Nome', 'name')->sortable(),
       Column::make('Marca', fn ($entity) => Html::make('b')->text($entity->brand)),
       Column::make('Html Test', function($entity) {
-        return  Html::make('a')->attributes(["href" => "https://google.com","target" => "_blank"])->text(
-          Html::make('i')->text($entity->name)
-        );
+        return  Html::make('a')->attributes(["href" => "https://google.com","target" => "_blank","style" => "display:flex;flex-direction:column"])->text([
+          Html::make('b')->text("Test :"),
+          Html::make('i')->text($entity->name),
+        ]);
       }),
       Column::make('Vue Component Test', fn ($entity) => VueComponent::make('ComponentTest')->attributes(["color" => "red"])->text($entity->brand)),
     ];

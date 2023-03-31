@@ -27,7 +27,7 @@ const showAsc = computed(() => {
 
 const handleSort = () =>{
   if(!props.canSort) return;
-  emit('on-click-sort',[props.column.index,showAsc.value ? 'desc' : 'asc'])
+  emit('on-click-sort',[props.column.index,showAsc.value || !isSorting.value ? 'desc' : 'asc'])
 }
 
 </script>
@@ -43,7 +43,7 @@ const handleSort = () =>{
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
       </a>
-      <template v-else>{{column.label}}</template>
+      <span class="lazarus-viewlist--hlabel" v-else>{{column.label}}</span>
     </th>
 </template>
 
@@ -52,10 +52,13 @@ const handleSort = () =>{
   display: flex;
   align-items: center;
   text-decoration: none;
+  font-size: 0.8rem;
+  &a {
     &:hover {
       transition: .5s;
       filter : brightness(130%);
     }
+  }
 
   .lazarus-viewlist--arrow-sort {
     height: 18px;
