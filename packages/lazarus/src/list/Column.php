@@ -47,7 +47,7 @@ class Column
     return $this;
   }
 
-  public function visible(bool $value = true): Column
+  public function canSee(bool $value = true): Column
   {
     $this->visible = $value;
     return $this;

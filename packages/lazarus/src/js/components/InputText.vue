@@ -3,14 +3,14 @@ import { watch } from 'vue';
 import { ref } from 'vue';
 
 const props = defineProps({
-  value :String,
+  modelValue :String,
   placeholder :String,
   disabled:Boolean,
 })
 
 const emit = defineEmits(["update:modelValue"]);
 
-const value = ref(props.value)
+const value = ref(props.modelValue)
 
 watch(() => value.value, (val) => {
   emit("update:modelValue",val)

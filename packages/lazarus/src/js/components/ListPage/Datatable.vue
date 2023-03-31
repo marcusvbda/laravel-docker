@@ -18,7 +18,6 @@ const isLoading = ref(true);
 const data = ref([]);
 const visible = ref(false);
 const showBasicFilter = ref(false);
-const especificFilter = ref({});
 const basicFilter = ref(getUrlParam('_',''));
 const searchText = ref('');
 const hoverColor = ref('');
@@ -27,6 +26,7 @@ const noResultText = ref('');
 const sort = ref(getUrlParam('sort',''));
 const sortType = ref(getUrlParam('sort-type',''));
 const columns = ref([]);
+const filters = ref([]);
 const filterTimeout = ref(0);
 
 const perPageOptions = ref([]);
@@ -66,6 +66,7 @@ resourceResolver({
     showBasicFilter.value = result.show_basic_filter;
     searchText.value = result.basic_filter_placeholder;
     hoverColor.value = result.hover_color;
+    filters.value = result.filters;
     themeColor.value = result.theme_color;
     noResultText.value = result.no_result_text;
     perPage.value = Number(getUrlParam('per-page',result.per_page_default));
@@ -84,6 +85,10 @@ const colSpan = computed(() => {
 
 const isShowResult = computed(() => {
   return !isLoading.value && data.value.length;
+})
+
+const hasFilter = computed(() => {
+  return !isLoading.value && filters.value.length ? true : false;
 })
 
 const canSort = computed(() => {
@@ -136,6 +141,9 @@ const checkType = (val,type) => {
     <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
         <InputText v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
+        <template v-if="hasFilter">
+          Filter here ...
+        </template>
       </div>
       <div :class="`lazarus-viewlist--responsive-table ${isLoading ? 'is-loading' : ''}`">
         <table class="lazarus-viewlist--table">
@@ -155,7 +163,7 @@ const checkType = (val,type) => {
               <tr v-for="(row,i) in data" :key="i" class="showing-result">
                 <template v-for="(col,j) in columns">
                   <td  v-if="checkType(row[j],'string') || checkType(row[j],'number')" :key="j" v-html="row[j]" />
-                  <td v-else>
+                  <td v-else-if="row[j]">
                     <ComponentProxy :name="row[j].component" :attributes="row[j].attributes">
                       {{ row[j].text ? row[j].text : '' }}
                     </ComponentProxy>

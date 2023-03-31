@@ -24,20 +24,35 @@ class ResourceController extends Controller
     return response()->json(['can_create' => app()->make($request->resource)->canCreate()]);
   }
 
+  private function filterOnArray($array,$index): array
+  {
+    $filtered = array_filter($array, fn ($column) => $column->{$index});
+    $newArray = [];
+    foreach ($filtered as $row) $newArray[] = $row;
+    return $newArray;
+  }
+
   private function getVisibleListFields($resource): array
   {
-    return array_filter($resource->list(), fn ($column) => $column->visible);
+    return $this->filterOnArray($resource->list(), 'visible');
+  }
+
+  private function getVisibleListFilters($resource): array
+  {
+    return $this->filterOnArray($resource->filters(), 'visible');
   }
 
   protected function resolveDataTable(Request $request): JsonResponse
   {
     try {
       $resource = app()->make($request->resource);
-      $list = $this->getVisibleListFields($resource);
+      $columns = $this->getVisibleListFields($resource);
+      $filters = $this->getVisibleListFilters($resource);
 
       return response()->json([
         'success' => true,
-        'columns' => $list,
+        'columns' => $columns,
+        'filters' => $filters,
         'no_result_text' => $resource->noListResultText(),
         'per_page_options' => $resource->perPageOptions(),
         'per_page_default' => $resource->perPageDefault(),

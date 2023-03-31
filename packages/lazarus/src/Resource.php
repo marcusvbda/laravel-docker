@@ -174,6 +174,11 @@ class Resource
     return [];
   }
 
+  public function filters(): array
+  {
+    return [];
+  }
+
   public function basicFilterHandler($query, $value)
   {
     return $query->where(function ($query) use ($value) {
