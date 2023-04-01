@@ -30,3 +30,5 @@ export const getUrlParam = (key: string, fallback: any = null) => {
   const value = urlParams.get(key)
   return value ? value : fallback;
 }
+
+export const checkType = (val,type) => typeof val === type;

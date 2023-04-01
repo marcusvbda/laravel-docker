@@ -73,10 +73,27 @@ class Resource
     return str_replace('{singularTitle}', $this->singularTitle(), $createBtnText);
   }
 
+  private function renderSlot($slot): array
+  {
+    $rows = [];
+    foreach ($slot as $row) {
+      if(@$row?->rendered) $rows[] = $row->rendered;
+      if(@$row?->componentOptions) $rows[] = $row->componentOptions;
+      if(gettype($row) == 'string') $rows[] = $row;
+    }
+    return $rows;
+  }
+
   public function listViewPayload(): array
   {
     $defaultPayload = $this->defaultPayload();
-    return array_merge($defaultPayload, []);
+    $beforeListSlot = $this->renderSlot($this->beforeListSlot());
+
+    return array_merge($defaultPayload, [
+      "slots" => [
+        'before_list_slot' => $beforeListSlot,
+      ]
+    ]);
   }
 
   public function aclPayload($entity = null): array
@@ -190,5 +207,10 @@ class Resource
         }
       }
     });
+  }
+  
+  public function beforeListSlot():array
+  {
+    return [];
   }
 }

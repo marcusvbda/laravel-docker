@@ -55,4 +55,16 @@ class Vehicles extends Resource
       Filter::make('Marca','text')->handler(fn ($q, $v)=> $q->where('brand', 'like', "%$v%")),
     ];
   }
+
+  // public function beforeListSlot():array
+  // {
+  //   return [
+  //     VueComponent::make('ComponentTest')->attributes(["color" => "red","style"=> "display:flex;width:50%;"])->text("Vue Component"),
+  //     Html::make('h1')->attributes(["style" => "display:flex;flex-direction:column;flex:1;"])->text([
+  //       Html::make('b')->text("Test :"),
+  //       Html::make('i')->text("Before"),
+  //     ]),
+  //   ];
+  // }
+
 }

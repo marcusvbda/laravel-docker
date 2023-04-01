@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { resourceResolver } from '../../utils';
 import HeaderCol from './HeaderCol.vue';
 import Paginator from './Paginator.vue';
 import { ref, computed, watch } from 'vue';
-import { setUrlParam,getUrlParam} from '../../utils';
+import { setUrlParam,getUrlParam,checkType,resourceResolver} from '../../utils';
 import ComponentProxy from '../ComponentProxy.vue';
 import InputText from '../InputText.vue';
 
@@ -23,6 +22,8 @@ const searchText = ref('');
 const hoverColor = ref('');
 const themeColor = ref('');
 const noResultText = ref('');
+const beforeListSlot = ref([]);
+const afterListSlop = ref([]);
 const sort = ref(getUrlParam('sort',''));
 const sortType = ref(getUrlParam('sort-type',''));
 const columns = ref([]);
@@ -62,6 +63,8 @@ resourceResolver({
   action: 'resolveDataTable'
 }).then((result) => {
   if(result.success){
+    beforeListSlot.value = result.before_list_slot;
+    afterListSlop.value = result.after_list_slot;
     columns.value = result.columns;
     showBasicFilter.value = result.show_basic_filter;
     searchText.value = result.basic_filter_placeholder;
@@ -94,6 +97,7 @@ const hasFilter = computed(() => {
 const canSort = computed(() => {
   return !isLoading.value && data.value.length ? true : false;
 })
+
 
 watch(() => basicFilter.value, (val) => {
   if(!isLoading.value) { 
@@ -130,10 +134,6 @@ const sortClickHandle = (val) => {
   sortType.value = val[1];
   setUrlParam('sort-type', val[1]);
   fetchData(page.value,perPage.value);
-}
-
-const checkType = (val,type) => {
-  return typeof val === type;
 }
 </script>
 
