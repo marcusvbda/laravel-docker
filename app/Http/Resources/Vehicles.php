@@ -26,6 +26,7 @@ class Vehicles extends Resource
     return [
       Column::make('#', 'id')->width("100px")->canSee(true)->sortable(),
       Column::make('Nome', 'name')->sortable(),
+      Column::make('String direto', fn ($entity) => "<b>TESTE 123</b>"),
       Column::make('Marca', fn ($entity) => Html::make('b')->text($entity->brand)),
       Column::make('Html Test', function($entity) {
         return  Html::make('a')->attributes(["href" => "https://google.com","target" => "_blank","style" => "display:flex;flex-direction:column"])->text([
@@ -59,6 +60,7 @@ class Vehicles extends Resource
   // public function beforeListSlot():array
   // {
   //   return [
+  //     "<h1>Teste1212121</h1>",
   //     VueComponent::make('ComponentTest')->attributes(["color" => "red","style"=> "display:flex;width:50%;"])->text("Vue Component"),
   //     Html::make('h1')->attributes(["style" => "display:flex;flex-direction:column;flex:1;"])->text([
   //       Html::make('b')->text("Test :"),
@@ -66,5 +68,18 @@ class Vehicles extends Resource
   //     ]),
   //   ];
   // }
+
+  // public function afterListSlot():array
+  // {
+  //   return [
+  //     "<h1>Teste1212121</h1>",
+  //     VueComponent::make('ComponentTest')->attributes(["color" => "red","style"=> "display:flex;width:50%;"])->text("Vue Component"),
+  //     Html::make('h1')->attributes(["style" => "display:flex;flex-direction:column;flex:1;"])->text([
+  //       Html::make('b')->text("Test :"),
+  //       Html::make('i')->text("Before"),
+  //     ]),
+  //   ];
+  // }
+  
 
 }

@@ -13,9 +13,14 @@ class Resource
   {
     if (!$this->canViewList()) abort(403);
 
-    return Inertia::render($this->listView(), [
+    return $this->renderPageHandler($this->listView(),[
       'payload' => $this->listViewPayload()
     ]);
+  }
+
+  public function renderPageHandler(string $view,array $payload): Response
+  {
+    return Inertia::render($view, $payload);
   }
 
   protected function icon(): string
@@ -73,27 +78,10 @@ class Resource
     return str_replace('{singularTitle}', $this->singularTitle(), $createBtnText);
   }
 
-  private function renderSlot($slot): array
-  {
-    $rows = [];
-    foreach ($slot as $row) {
-      if(@$row?->rendered) $rows[] = $row->rendered;
-      if(@$row?->componentOptions) $rows[] = $row->componentOptions;
-      if(gettype($row) == 'string') $rows[] = $row;
-    }
-    return $rows;
-  }
-
   public function listViewPayload(): array
   {
     $defaultPayload = $this->defaultPayload();
-    $beforeListSlot = $this->renderSlot($this->beforeListSlot());
-
-    return array_merge($defaultPayload, [
-      "slots" => [
-        'before_list_slot' => $beforeListSlot,
-      ]
-    ]);
+    return array_merge($defaultPayload, []);
   }
 
   public function aclPayload($entity = null): array
@@ -210,6 +198,11 @@ class Resource
   }
   
   public function beforeListSlot():array
+  {
+    return [ ];
+  }
+
+  public function afterListSlot():array
   {
     return [];
   }

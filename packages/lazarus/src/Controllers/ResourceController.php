@@ -68,6 +68,34 @@ class ResourceController extends Controller
     }
   }
 
+  private function renderSlotRespoonse(array $slot): array
+  {
+    $rows = [];
+    foreach ($slot as $row) {
+      if(@$row?->rendered) $rows[] = $row->rendered;
+      if(@$row?->componentOptions) $rows[] = $row->componentOptions;
+      if(gettype($row) == 'string') $rows[] = $row;
+    }
+    return $rows;
+  }
+
+  private function makeSlotResponse(Request $request,string $index): JsonResponse
+  {
+    $resource = app()->make($request->resource);
+    $slot = $this->renderSlotRespoonse($resource->{$index}());
+    return response()->json(['success' => true, 'slot' => $slot]);
+  }
+
+  protected function resolveBeforeListSlot(Request $request): JsonResponse
+  {
+    return $this->makeSlotResponse($request,"beforeListSlot");
+  }
+
+  protected function resolveAfterListSlot(Request $request): JsonResponse
+  {
+    return $this->makeSlotResponse($request,"afterListSlot");
+  }
+
   protected function resolveListData(Request $request): JsonResponse
   {
       $resource = app()->make($request->resource);
