@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Schema;
 
 class ResourceController extends Controller
 {
-  public function resolveResourceComponent(Request $request): JsonResponse
+  public function resolveResourceComponent($action,Request $request): JsonResponse
   {
     try {
-      return $this->{$request->action}($request);
+      return $this->{$action}($request);
     } catch (Error $e) {
       return response()->json(['success' => false, 'message' => $e->getMessage()]);
     }

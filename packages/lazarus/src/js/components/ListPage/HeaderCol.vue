@@ -52,7 +52,7 @@ const handleSort = () =>{
   display: flex;
   align-items: center;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   &a {
     &:hover {
       transition: .5s;

@@ -15,6 +15,6 @@ class Lazarus
 
   public static function routes(): void
   {
-    Route::post('resolve-resource-component', [ResourceController::class, 'resolveResourceComponent'])->name('lazarus.resolve-resource-component');
+    Route::post('resolve-resource-component/{action}', [ResourceController::class, 'resolveResourceComponent'])->name('lazarus.resolve-resource-component');
   }
 }

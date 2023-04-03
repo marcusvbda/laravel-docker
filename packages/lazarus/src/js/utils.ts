@@ -14,8 +14,8 @@ export const request = (method: string, url: string, body: any) => {
   }).then(res => res.json())
 }
 
-export const resourceResolver = (body: any) => {
-  return request('POST', route('lazarus.resolve-resource-component'), body)
+export const resourceResolver = (action:string,body: any) => {
+  return request('POST', route('lazarus.resolve-resource-component',{action}), body)
 }
 
 export const setUrlParam = (key: string, value: any) => {

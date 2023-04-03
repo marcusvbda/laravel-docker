@@ -16,18 +16,16 @@ const props = defineProps({
 });
 const colors = props.payload.colors ?? {};
 
-resourceResolver({
+resourceResolver("resolveBeforeListSlot",{
   resource: props.payload.resource.name,
-  action: 'resolveBeforeListSlot',
 }).then((result) => {
   if(result.success){
     before_list_slot.value = result.slot;
   }
 })
 
-resourceResolver({
+resourceResolver("resolveAfterListSlot",{
   resource: props.payload.resource.name,
-  action: 'resolveAfterListSlot',
 }).then((result) => {
   if(result.success){
     after_list_slot.value = result.slot;

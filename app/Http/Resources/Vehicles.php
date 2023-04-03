@@ -33,8 +33,9 @@ class Vehicles extends Resource
           Html::make('b')->text("Test :"),
           Html::make('i')->text($entity->name),
         ]);
-      }),
-      Column::make('Vue Component Test', fn ($entity) => VueComponent::make('ComponentTest')->attributes(["color" => "red"])->text($entity->brand)),
+      })->hideable(),
+      Column::make('Vue Component Test', fn ($entity) => VueComponent::make('ComponentTest')->attributes(["color" => "red"])->text($entity->brand))
+        ->hideable(),
     ];
   }
 

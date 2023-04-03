@@ -10,6 +10,7 @@ class Column
   public bool $visible;
   private object $action;
   public string $width;
+  public bool $hideable;
 
   public function __construct(string $label, string $index, object $action)
   {
@@ -18,7 +19,7 @@ class Column
     $this->action = $action;
     $this->sortable = false;
     $this->visible = true;
-    $this->filter = [];
+    $this->hideable = false;
     $this->width = "auto";
   }
 
@@ -56,6 +57,12 @@ class Column
   public function sortable(bool $value = true): Column
   {
     $this->sortable = $value;
+    return $this;
+  }
+
+  public function hideable(bool $value = true): Column
+  {
+    $this->hideable = $value;
     return $this;
   }
 }

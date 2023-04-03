@@ -4,6 +4,7 @@ import Paginator from './Paginator.vue';
 import { ref, computed, watch } from 'vue';
 import { setUrlParam,getUrlParam,checkType,resourceResolver} from '../../utils';
 import ComponentProxy from '../ComponentProxy.vue';
+import DropdownBtn from '../DropdownBtn.vue';
 import InputText from '../InputText.vue';
 
 const props = defineProps({
@@ -16,6 +17,7 @@ const props = defineProps({
 const isLoading = ref(true);
 const data = ref([]);
 const visible = ref(false);
+const preventDeepShowColumn = ref(true);
 const showBasicFilter = ref(false);
 const basicFilter = ref(getUrlParam('_',''));
 const searchText = ref('');
@@ -29,6 +31,7 @@ const sortType = ref(getUrlParam('sort-type',''));
 const columns = ref([]);
 const filters = ref([]);
 const filterTimeout = ref(0);
+const showColumns = ref({});
 
 const perPageOptions = ref([]);
 const page = ref(Number(getUrlParam('page',1)));
@@ -39,7 +42,7 @@ const perPageText = ref('');
 
 const fetchData = (pageValue:Number = 1,perPageValue:any = null) => {
   isLoading.value = true;
-  resourceResolver({
+  resourceResolver("resolveListData",{
     resource: props.resource.name,
     action: 'resolveListData',
     page : pageValue,
@@ -58,9 +61,8 @@ const fetchData = (pageValue:Number = 1,perPageValue:any = null) => {
   })
 }
 
-resourceResolver({
+resourceResolver("resolveDataTable",{
   resource: props.resource.name,
-  action: 'resolveDataTable'
 }).then((result) => {
   if(result.success){
     beforeListSlot.value = result.before_list_slot;
@@ -81,6 +83,35 @@ resourceResolver({
   }
 })
 
+const makeColumnIndex = (columns,filter) => {
+  return columns.map((col,index) => {
+      if(filter(col)) return ({
+        column : col,
+        index : index
+      });
+    }).filter(x=>x)
+}
+
+const showColumn = (index:any):boolean => {
+  return showColumns.value[`index_${String(index)}`] === undefined || showColumns.value[`index_${String(index)}`] == true;
+}
+
+const hideableColumns = computed(() => {
+  preventDeepShowColumn.value = true;
+  const result = makeColumnIndex(columns.value,(col) => col.hideable && col.label)
+  let oldConfig = localStorage.getItem('LzShowColumns');
+  oldConfig = oldConfig ? JSON.parse(oldConfig) : {};
+  
+
+  for(let col of result) {
+    const index = `index_${col.index}`;
+    showColumns.value[index] = oldConfig[index] ?? true;
+  }
+
+  setTimeout(() => preventDeepShowColumn.value = false, 100);
+  return result
+})
+
 const colSpan = computed(() => {
   let count =  columns.value.length;  
   return count;
@@ -92,6 +123,10 @@ const isShowResult = computed(() => {
 
 const hasFilter = computed(() => {
   return !isLoading.value && filters.value.length ? true : false;
+})
+
+const hasHideableColumns = computed(() => {
+  return !isLoading.value && hideableColumns.value.length ? true : false;
 })
 
 const canSort = computed(() => {
@@ -135,21 +170,43 @@ const sortClickHandle = (val) => {
   setUrlParam('sort-type', val[1]);
   fetchData(page.value,perPage.value);
 }
+
+watch(() => showColumns, (config) => {
+  if(preventDeepShowColumn.value) return;
+  localStorage.setItem('LzShowColumns',JSON.stringify(config.value));
+},{deep: true})
 </script>
 
 <template>
     <div class="lazarus-viewlist--datatable" v-if="visible" :style="{'--hover-datatable-color' : hoverColor,'--theme-datatable-color' : themeColor}">
       <div class="lazarus-viewlist--filter-row">
         <InputText v-model="basicFilter" :placeholder="searchText" :disabled="isLoading"/>
+        <template v-if="hasHideableColumns">
+          <DropdownBtn class="list-column-dropdown">
+              <template v-slot:btn-content>
+                <svg wire:loading.remove.delay="" wire:target="" class="filament-icon-button-icon w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                </svg>
+              </template>
+              <template v-slot:list-content>
+                <label v-for="(col, i ) in hideableColumns" :key="i" class="row-item">
+                  <input type="checkbox"  v-model="showColumns[`index_${col.index}`]"/>
+                  {{col.column.label}}
+                </label>
+              </template>
+          </DropdownBtn>
+        </template>
         <template v-if="hasFilter">
-          Filter here ...
+          <!-- Filter here ... -->
         </template>
       </div>
       <div :class="`lazarus-viewlist--responsive-table ${isLoading ? 'is-loading' : ''}`">
         <table class="lazarus-viewlist--table">
           <thead>
             <tr>
-              <HeaderCol v-for="(col,i) in columns" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType" @on-click-sort="sortClickHandle"/>
+              <template  v-for="(col,i) in columns">
+                <HeaderCol v-if="showColumn(i)" :key="i" :column="col" :canSort="canSort" :sort="sort" :sortType="sortType" @on-click-sort="sortClickHandle"/>
+              </template>
             </tr>
           </thead>
           <tbody>
@@ -162,12 +219,14 @@ const sortClickHandle = (val) => {
             <template v-else>
               <tr v-for="(row,i) in data" :key="i" class="showing-result">
                 <template v-for="(col,j) in columns">
-                  <td  v-if="checkType(row[j],'string') || checkType(row[j],'number')" :key="j" v-html="row[j]" />
-                  <td v-else-if="row[j]">
-                    <ComponentProxy :name="row[j].component" :attributes="row[j].attributes">
-                      {{ row[j].text ? row[j].text : '' }}
-                    </ComponentProxy>
-                  </td>
+                  <template v-if="showColumn(j)">
+                    <td  v-if="checkType(row[j],'string') || checkType(row[j],'number')" :key="j" v-html="row[j]" />
+                    <td v-else-if="row[j]">
+                      <ComponentProxy :name="row[j].component" :attributes="row[j].attributes">
+                        {{ row[j].text ? row[j].text : '' }}
+                      </ComponentProxy>
+                    </td>
+                  </template>
                 </template>
               </tr>
             </template>
@@ -188,6 +247,14 @@ const sortClickHandle = (val) => {
 </template>
 
 <style lang="scss" scoped>
+
+.lazarus-dropdown-btn.hover {
+  svg {
+    transition: .5s;
+    filter: brightness(120%);
+  }
+  
+}
 .lazarus-viewlist .lazarus-viewlist--datatable {
     background-color: white;
     border-radius: 8px;
@@ -195,6 +262,19 @@ const sortClickHandle = (val) => {
     .lazarus-viewlist--filter-row {
       display: flex;
       padding: 8px 16px;
+      gap: 25px;
+
+      .list-column-dropdown {
+
+        .row-item {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          height: 45px;
+          cursor: pointer;
+          width: 100%;
+        }
+      }
     }
   .lazarus-viewlist--responsive-table {
     width: 100%;
@@ -217,6 +297,7 @@ const sortClickHandle = (val) => {
 
         &.header-filter {
           background-color: white;
+
         }
       }
 
@@ -230,7 +311,7 @@ const sortClickHandle = (val) => {
           border-top: 1px solid var(--gray_600);
           border-bottom: 1px solid var(--gray_600);
           white-space: nowrap;
-          font-size: .8rem;
+          font-size: .875rem;
           color: var(--gray_900);
           @media(max-width: 900px) {
             font-size: 1rem;
