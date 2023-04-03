@@ -246,12 +246,38 @@ watch(() => showColumns, (config) => {
     </div>  
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .lazarus-dropdown-btn.hover {
+ 
+  .lazarus-dropdown-button {
+    border-radius: 100%;
+    position: relative;
+    overflow: hidden;
+    &::after {
+      display: block;
+      content: " ";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      z-index: 0;
+      background: var(--theme-datatable-color);
+      opacity: .1;
+    }
+  }
+
   svg {
+    z-index: 1;
     transition: .5s;
-    filter: brightness(120%);
+    stroke: var(--theme-datatable-color);
+  }
+
+  .row-item {
+    input:checked {
+      background-color: var(--theme-datatable-color);
+    }
   }
   
 }

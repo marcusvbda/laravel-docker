@@ -209,7 +209,6 @@ watch(() => selectedPerPage.value, (val) => {
             position: absolute;
             height: 100%;
             width: 100%;
-            background: red;
             z-index: 0;
             background: var(--theme-datatable-color);
             opacity: .08;
