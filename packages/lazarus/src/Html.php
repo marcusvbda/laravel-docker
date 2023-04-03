@@ -51,8 +51,8 @@ class Html
       foreach ($this->attributes as $key => $value) {
         $attributes .= " $key='$value'";
       }
-      $value = "<$this->tag$attributes></$this->tag>";
-      if ($this->text) $value = "<$this->tag$attributes>$this->text</$this->tag>";
+      $value = "<$this->tag $attributes></$this->tag>";
+      if ($this->text) $value = "<$this->tag $attributes>$this->text</$this->tag>";
     }
     $this->rendered = $value;
   }
