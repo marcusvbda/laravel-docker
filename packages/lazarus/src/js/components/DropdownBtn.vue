@@ -5,7 +5,7 @@ import "../../scss/theme.scss";
 const visible = ref(false);
 </script>
 <template>
-  <div :class="`lazarus-dropdown-btn ${visible ? 'hover' : ''}`" @mouseenter="visible = true" @mouseleave="visible = true">
+  <div :class="`lazarus-dropdown-btn ${visible ? 'hover' : ''}`" @mouseenter="visible = true" @mouseleave="visible = false">
     <div class="lazarus-dropdown-button" >
       <slot name="btn-content" />
     </div>
