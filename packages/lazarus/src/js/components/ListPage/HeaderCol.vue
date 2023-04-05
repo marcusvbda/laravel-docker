@@ -16,7 +16,6 @@ const props = defineProps({
 
 const emit = defineEmits(["on-click-sort"])
 
-
 const isSorting = computed(() => {
   return props.sort === props.column.index
 });

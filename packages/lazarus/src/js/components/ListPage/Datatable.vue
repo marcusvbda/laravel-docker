@@ -65,8 +65,6 @@ resourceResolver("resolveDataTable",{
   resource: props.resource.name,
 }).then((result) => {
   if(result.success){
-    beforeListSlot.value = result.before_list_slot;
-    afterListSlop.value = result.after_list_slot;
     columns.value = result.columns;
     showBasicFilter.value = result.show_basic_filter;
     searchText.value = result.basic_filter_placeholder;
@@ -320,11 +318,6 @@ watch(() => showColumns, (config) => {
         padding:  0.5rem 1rem;
         text-align: left;
         white-space: nowrap;
-
-        &.header-filter {
-          background-color: white;
-
-        }
       }
 
       tbody tr {
